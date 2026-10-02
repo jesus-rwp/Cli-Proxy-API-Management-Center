@@ -141,7 +141,7 @@ export function QuotaListColumns({
         );
       })}
       {resets && (
-        <div className={classes.column}>
+        <div className={`${classes.column} ${classes.columnResets}`}>
           <div className={classes.columnHead}>
             <span className={classes.columnLabel}>{t('quota_list.manual_resets')}</span>
           </div>

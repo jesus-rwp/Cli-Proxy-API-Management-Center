@@ -446,6 +446,7 @@ export function QuotaPage() {
             entries={pageItems}
             counts={tabCounts}
             getQuota={getQuota}
+            resolvedTheme={resolvedTheme}
             showEmail={showEmail}
             canUseActions={canUseActions}
             resettingQuotaName={resettingQuotaName}

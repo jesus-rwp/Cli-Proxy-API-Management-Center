@@ -8,18 +8,14 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNow } from '@/hooks/useNow';
 import type { ResolvedTheme } from '@/types';
-import {
-  getAuthFileIcon,
-  getThemeSurfaceIconBackground,
-  getTypeLabel,
-  isThemeSurfaceIconProvider,
-} from '@/features/authFiles/constants';
+import { getTypeLabel } from '@/features/authFiles/constants';
 import { QuotaMeter } from '../components/QuotaMeter';
 import bodyStyles from '../components/QuotaBody.module.scss';
 import type { QuotaFileEntry } from '../logic';
 import type { QuotaCardState } from '../providers';
 import { bindQuotaClasses } from '../types';
 import { bindQuotaListClasses } from './classes';
+import { ProviderLogo } from './ProviderLogo';
 import { QuotaResetLine } from './QuotaListColumns';
 import { resolveListText } from './rowModel';
 import { buildProviderSummaries } from './summaryModel';
@@ -49,24 +45,10 @@ export function QuotaSummary({ entries, getQuota, resolvedTheme }: QuotaSummaryP
     <section className={styles.strip} aria-label={t('quota_list.summary_aria')}>
       {summaries.map((summary) => {
         const typeLabel = getTypeLabel(t, summary.type);
-        const iconSrc = getAuthFileIcon(summary.type, resolvedTheme);
         return (
           <article key={summary.type} className={styles.cell}>
             <header className={styles.head}>
-              <span
-                className={styles.iconWrap}
-                style={
-                  isThemeSurfaceIconProvider(summary.type)
-                    ? { background: getThemeSurfaceIconBackground(resolvedTheme) }
-                    : undefined
-                }
-              >
-                {iconSrc ? (
-                  <img src={iconSrc} alt="" className={styles.icon} />
-                ) : (
-                  <span className={styles.iconFallback}>{typeLabel.slice(0, 1).toUpperCase()}</span>
-                )}
-              </span>
+              <ProviderLogo type={summary.type} resolvedTheme={resolvedTheme} />
               <span className={styles.provider}>{typeLabel}</span>
               <span className={styles.accounts}>
                 {t('quota_list.summary_accounts', { count: summary.total })}

@@ -2,9 +2,10 @@
 
 /* ============================================================
  * Quota list view: provider groups of hairline-separated rows.
- * Row = identity | window columns | actions. Every row's column
- * area is the same width, so auto-fill gives each row the same
- * tracks and a window lines up from one row to the next.
+ * Row = identity | window columns | actions. Window columns have
+ * a fixed width so a window lines up from one row to the next;
+ * the manual-resets column after them takes the leftover width
+ * so its expiry line is not cut short.
  * Telemetry figures are mono + tabular-nums, as on the cards.
  * ============================================================ */
 
@@ -23,7 +24,7 @@
 
 .groupTitle {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
   margin: 0 0 4px;
   font-size: 16px;
@@ -91,7 +92,12 @@
   line-height: 1.4;
   color: var(--text-tertiary);
 
-  > * + *::before {
+  /* Separator trails each part, so a wrapped line never starts with a dot. */
+  > * {
+    white-space: nowrap;
+  }
+
+  > *:not(:last-child)::after {
     content: '·';
     margin: 0 6px;
     color: var(--text-quaternary);
@@ -110,17 +116,22 @@
 }
 
 .columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 14px 28px;
   min-width: 0;
 }
 
 .column {
   display: flex;
+  flex: 0 0 176px;
   flex-direction: column;
   gap: 7px;
   min-width: 0;
+}
+
+.columnResets {
+  flex: 1 1 176px;
 }
 
 .columnHead {
@@ -259,13 +270,14 @@
 }
 
 .skeleton {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 14px 28px;
 }
 
 .skeletonCell {
   display: block;
+  flex: 0 0 176px;
   height: 44px;
   border-radius: 8px;
   background-color: color-mix(in srgb, var(--text-primary) 6%, transparent);
@@ -413,7 +425,11 @@
 @include mobile {
   .columns,
   .skeleton {
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
     gap: 12px 20px;
+  }
+
+  .column,
+  .skeletonCell {
+    flex: 1 1 150px;
   }
 }

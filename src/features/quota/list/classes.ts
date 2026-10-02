@@ -6,6 +6,7 @@
 export const QUOTA_LIST_CLASS_KEYS = [
   'columns',
   'column',
+  'columnResets',
   'columnHead',
   'columnLabel',
   'columnPercent',
