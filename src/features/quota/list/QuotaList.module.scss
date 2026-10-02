@@ -92,8 +92,14 @@
   line-height: 1.4;
   color: var(--text-tertiary);
 
-  /* Separator trails each part, so a wrapped line never starts with a dot. */
+  /* Separator trails each part, so a wrapped line never starts with a dot.
+   * A part longer than the column (a long plan name) ellipsizes; the full
+   * subtitle is in the title. */
   > * {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
   }
 
