@@ -1585,6 +1585,26 @@
     "weekday_fri": "Fri",
     "weekday_sat": "Sat"
   },
+  "quota_list": {
+    "view_label": "Quota view",
+    "view_list": "List",
+    "view_cards": "Cards",
+    "show_email": "Show email",
+    "hide_email": "Hide email",
+    "reset_none": "No reset pending",
+    "reset_unknown": "Reset time unknown",
+    "renews": "renews {{date}}",
+    "ends": "ends {{date}}",
+    "manual_resets": "Manual resets",
+    "resets_available": "available",
+    "no_windows": "No quota windows reported",
+    "summary_aria": "Quota summary by provider",
+    "summary_accounts_one": "{{count}} account",
+    "summary_accounts_other": "{{count}} accounts",
+    "summary_of": "of {{total}}%",
+    "summary_no_window": "No window data",
+    "summary_loaded": "Data received: {{loaded}} of {{total}}"
+  },
   "plugin_management": {
     "title": "Plugin Management",
     "description": "Review discovered and registered plugins, then manage instance toggles, config fields, and resource links.",

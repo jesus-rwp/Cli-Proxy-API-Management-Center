@@ -51,16 +51,15 @@ import { useDevinQuotaAutoLoad } from './providers/devin/useDevinQuotaAutoLoad';
 import { useQuotaActions } from './hooks/useQuotaActions';
 import { useQuotaBatchLoader } from './hooks/useQuotaBatchLoader';
 import { readQuotaUiState, writeQuotaUiState } from './uiState';
+import { QuotaList, QuotaListSkeleton } from './list/QuotaList';
+import { QuotaSummary } from './list/QuotaSummary';
+import { QuotaEmailToggle, QuotaViewToggle } from './list/QuotaViewControls';
+import { credentialDisplayName, laneNameFormatter } from './list/privacy';
+import { readQuotaViewState, writeQuotaViewState, type QuotaViewMode } from './list/viewState';
 import styles from './QuotaPage.module.scss';
 
 const TAB_IDS: string[] = ['all', ...QUOTA_TAB_ORDER];
 const SKELETON_CARD_COUNT = 6;
-
-/**
- * Existing providers display filenames; Devin's card and timeline share an
- * identity-aware display label. Keep the filename fallback stable for memoization.
- */
-const displayNameFor = (name: string) => name;
 
 export function QuotaPage() {
   const { t } = useTranslation();
@@ -74,6 +73,10 @@ export function QuotaPage() {
   const [sortMode, setSortMode] = useState<QuotaSortMode>(
     () => readQuotaUiState()?.sortMode ?? 'default'
   );
+  const [viewMode, setViewMode] = useState<QuotaViewMode>(
+    () => readQuotaViewState()?.viewMode ?? 'list'
+  );
+  const [showEmail, setShowEmail] = useState(() => readQuotaViewState()?.showEmail ?? false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -199,6 +202,19 @@ export function QuotaPage() {
     writeQuotaUiState({ sortMode: next as QuotaSortMode });
   }, []);
 
+  const handleViewModeChange = useCallback((next: QuotaViewMode) => {
+    setViewMode(next);
+    writeQuotaViewState({ viewMode: next });
+  }, []);
+
+  const handleShowEmailChange = useCallback((next: boolean) => {
+    setShowEmail(next);
+    writeQuotaViewState({ showEmail: next });
+  }, []);
+
+  // Timeline lanes follow the list's email masking (Devin lanes carry the email too).
+  const displayNameFor = useMemo(() => laneNameFormatter(showEmail), [showEmail]);
+
   const sortOptions = useMemo(
     () =>
       QUOTA_SORT_MODES.map((mode) => ({ value: mode, label: t(`quota_management.sort_${mode}`) })),
@@ -321,6 +337,7 @@ export function QuotaPage() {
         refreshing={loading || batchLoading}
         disableControls={disableControls}
         onRefreshAll={handleRefreshAll}
+        extraActions={<QuotaEmailToggle showEmail={showEmail} onChange={handleShowEmailChange} />}
       />
 
       <section className={styles.workbench}>
@@ -333,6 +350,7 @@ export function QuotaPage() {
             resolvedTheme={resolvedTheme}
             onChange={handleTabChange}
           />
+          <QuotaViewToggle value={viewMode} onChange={handleViewModeChange} />
         </div>
 
         <div className={styles.toolbar}>
@@ -379,7 +397,17 @@ export function QuotaPage() {
           </div>
         )}
 
-        {loading ? (
+        {!loading && !isEmpty && (
+          <QuotaSummary
+            entries={filteredEntries}
+            getQuota={getQuota}
+            resolvedTheme={resolvedTheme}
+          />
+        )}
+
+        {loading && viewMode === 'list' ? (
+          <QuotaListSkeleton />
+        ) : loading ? (
           <div className={styles.grid} aria-hidden="true">
             {Array.from({ length: SKELETON_CARD_COUNT }, (_, index) => (
               <Skeleton key={index} height={168} rounded={14} />
@@ -413,6 +441,17 @@ export function QuotaPage() {
               )
             }
           />
+        ) : viewMode === 'list' ? (
+          <QuotaList
+            entries={pageItems}
+            counts={tabCounts}
+            getQuota={getQuota}
+            showEmail={showEmail}
+            canUseActions={canUseActions}
+            resettingQuotaName={resettingQuotaName}
+            onRefresh={(entry) => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
+            onReset={(entry) => resetQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
+          />
         ) : (
           <div className={styles.grid}>
             {pageItems.map((entry, index) => (
@@ -424,6 +463,7 @@ export function QuotaPage() {
                 canRefresh={canUseActions && !entry.file.disabled}
                 resetting={resettingQuotaName === getQuotaCacheKey(entry.file)}
                 entranceDelayMs={cardEntranceDelay(index)}
+                displayName={credentialDisplayName(entry.file, showEmail)}
                 onRefresh={() => void refreshQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
                 onReset={() => resetQuota(entry.file, QUOTA_ADAPTERS[entry.type])}
               />

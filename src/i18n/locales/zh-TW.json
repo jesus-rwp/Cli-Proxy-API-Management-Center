@@ -1609,6 +1609,25 @@
     "weekday_fri": "五",
     "weekday_sat": "六"
   },
+  "quota_list": {
+    "view_label": "額度檢視",
+    "view_list": "列表",
+    "view_cards": "卡片",
+    "show_email": "顯示電子郵件",
+    "hide_email": "隱藏電子郵件",
+    "reset_none": "暫無待重置",
+    "reset_unknown": "重置時間未知",
+    "renews": "{{date}} 續訂",
+    "ends": "{{date}} 到期",
+    "manual_resets": "手動重置",
+    "resets_available": "可用",
+    "no_windows": "未回傳額度視窗",
+    "summary_aria": "依提供者彙總額度",
+    "summary_accounts": "{{count}} 個帳號",
+    "summary_of": "共 {{total}}%",
+    "summary_no_window": "暫無視窗資料",
+    "summary_loaded": "已取得資料：{{loaded}} / {{total}}"
+  },
   "plugin_management": {
     "title": "插件管理",
     "description": "查看已發現和已註冊的插件，管理實例開關、設定欄位和資源入口。",

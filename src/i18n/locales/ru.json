@@ -1588,6 +1588,28 @@
     "weekday_fri": "Пт",
     "weekday_sat": "Сб"
   },
+  "quota_list": {
+    "view_label": "Вид квот",
+    "view_list": "Список",
+    "view_cards": "Карточки",
+    "show_email": "Показать email",
+    "hide_email": "Скрыть email",
+    "reset_none": "Сброс не ожидается",
+    "reset_unknown": "Время сброса неизвестно",
+    "renews": "продление {{date}}",
+    "ends": "до {{date}}",
+    "manual_resets": "Ручные сбросы",
+    "resets_available": "доступно",
+    "no_windows": "Провайдер не сообщил окна квот",
+    "summary_aria": "Сводка квот по провайдерам",
+    "summary_accounts_one": "{{count}} аккаунт",
+    "summary_accounts_few": "{{count}} аккаунта",
+    "summary_accounts_many": "{{count}} аккаунтов",
+    "summary_accounts_other": "{{count}} аккаунта",
+    "summary_of": "из {{total}}%",
+    "summary_no_window": "Нет данных окна",
+    "summary_loaded": "Данные получены: {{loaded}} из {{total}}"
+  },
   "plugin_management": {
     "title": "Управление плагинами",
     "description": "Просматривайте найденные и зарегистрированные плагины, управляйте переключателями экземпляров, полями конфигурации и ссылками на ресурсы.",
