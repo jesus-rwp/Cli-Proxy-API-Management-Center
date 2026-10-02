@@ -1602,7 +1602,10 @@
     "summary_accounts": "{{count}} 个账号",
     "summary_of": "共 {{total}}%",
     "summary_no_window": "暂无窗口数据",
-    "summary_loaded": "已获取数据：{{loaded}} / {{total}}"
+    "summary_loaded": "已获取数据：{{loaded}} / {{total}}",
+    "passive_note": "来自代理请求 · {{age}}",
+    "passive_stale": "已过时 · 来自代理请求 {{age}}",
+    "passive_hint": "限额取自代理转发请求的响应头。刷新额度可获取完整信息：模型窗口、套餐、手动重置。"
   },
   "plugin_management": {
     "title": "插件管理",

@@ -10,6 +10,7 @@
  */
 
 import { useTranslation } from 'react-i18next';
+import { useNow } from '@/hooks/useNow';
 import { IconRefreshCw } from '@/components/ui/icons';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { resolveQuotaErrorMessage } from '@/utils/quota';
@@ -24,7 +25,8 @@ import bodyStyles from '../components/QuotaBody.module.scss';
 import { bindQuotaListClasses } from './classes';
 import { groupByProvider } from './grouping';
 import { ProviderLogo } from './ProviderLogo';
-import { QuotaListColumns, QuotaListSubtitle } from './QuotaListColumns';
+import { QuotaListColumns, QuotaListSubtitle, QuotaPassiveNote } from './QuotaListColumns';
+import { isPassiveQuotaStale, passiveObservedAt } from './passiveQuota';
 import { credentialDisplayName } from './privacy';
 import {
   buildClaudeResets,
@@ -58,9 +60,14 @@ function QuotaListRow(props: QuotaListRowProps) {
   const status = quota?.status ?? 'idle';
   const loading = status === 'loading';
   const loaded = status === 'success' && quota !== undefined;
+  const now = useNow();
+  // Figures from proxy traffic: no provider call is made for them, not even
+  // the reset-grant read, until the user refreshes the row.
+  const passiveAt = passiveObservedAt(quota);
+  const stale = passiveAt !== null && isPassiveQuotaStale(passiveAt, now);
   const claudeReset = useClaudeResetGrants(
     file,
-    entry.type === 'claude' && status !== 'idle',
+    entry.type === 'claude' && status !== 'idle' && passiveAt === null,
     !canRefresh || loading || resetting,
     quota,
     onRefresh
@@ -137,13 +144,14 @@ function QuotaListRow(props: QuotaListRowProps) {
           {displayName}
         </span>
         {plan && <QuotaListSubtitle plan={plan} classes={listClasses} />}
+        {passiveAt !== null && <QuotaPassiveNote observedAtMs={passiveAt} classes={listClasses} />}
       </div>
 
-      <div className={styles.body}>{body}</div>
+      <div className={stale ? `${styles.body} ${styles.bodyStale}` : styles.body}>{body}</div>
 
       {status !== 'idle' && (
         <div className={styles.actions}>
-          {entry.type === 'claude' && (
+          {entry.type === 'claude' && passiveAt === null && (
             <button
               type="button"
               className={styles.action}

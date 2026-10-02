@@ -9,10 +9,11 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNow } from '@/hooks/useNow';
-import { buildResetDisplay } from '@/utils/quota';
+import { buildResetDisplay, formatRelativeInstant } from '@/utils/quota';
 import { QuotaMeter } from '../components/QuotaMeter';
 import type { QuotaClassMap } from '../types';
 import type { QuotaListClassMap } from './classes';
+import { isPassiveQuotaStale } from './passiveQuota';
 import {
   resolveListText,
   type QuotaListColumn,
@@ -88,6 +89,28 @@ export function QuotaListSubtitle({
       {parts[0] && <span className={classes.plan}>{parts[0]}</span>}
       {parts[1] && <span>{parts[1]}</span>}
       {parts[1] && parts[2] && <span>{parts[2]}</span>}
+    </div>
+  );
+}
+
+/** Where the row's figures came from when they were not fetched: proxy traffic, and how long ago. */
+export function QuotaPassiveNote({
+  observedAtMs,
+  classes,
+}: {
+  observedAtMs: number;
+  classes: QuotaListClassMap;
+}) {
+  const { t, i18n } = useTranslation();
+  const now = useNow();
+  const stale = isPassiveQuotaStale(observedAtMs, now);
+  const age = formatRelativeInstant(observedAtMs, now, i18n.resolvedLanguage);
+  return (
+    <div
+      className={stale ? `${classes.passiveNote} ${classes.passiveNoteStale}` : classes.passiveNote}
+      title={t('quota_list.passive_hint')}
+    >
+      {t(stale ? 'quota_list.passive_stale' : 'quota_list.passive_note', { age })}
     </div>
   );
 }
