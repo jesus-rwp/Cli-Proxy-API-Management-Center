@@ -115,10 +115,25 @@
   color: var(--text-secondary);
 }
 
+.passiveNote {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-tertiary);
+}
+
+.passiveNoteStale {
+  color: var(--warning-color);
+}
+
 /* ---------- window columns ---------- */
 
 .body {
   min-width: 0;
+}
+
+/* Proxy-traffic figures older than an hour stay visible but recede. */
+.bodyStale {
+  opacity: 0.55;
 }
 
 .columns {

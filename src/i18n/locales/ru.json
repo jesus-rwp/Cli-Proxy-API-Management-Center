@@ -1610,7 +1610,10 @@
     "summary_accounts_other": "{{count}} аккаунта",
     "summary_of": "из {{total}}%",
     "summary_no_window": "Нет данных окна",
-    "summary_loaded": "Данные получены: {{loaded}} из {{total}}"
+    "summary_loaded": "Данные получены: {{loaded}} из {{total}}",
+    "passive_note": "по запросам прокси · {{age}}",
+    "passive_stale": "устарело · по запросам прокси {{age}}",
+    "passive_hint": "Лимиты взяты из заголовков ответов на запросы через прокси. «Обновить квоту» загрузит полную картину: окна моделей, план, ручные сбросы."
   },
   "plugin_management": {
     "title": "Управление плагинами",

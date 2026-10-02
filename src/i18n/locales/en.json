@@ -1605,7 +1605,10 @@
     "summary_accounts_other": "{{count}} accounts",
     "summary_of": "of {{total}}%",
     "summary_no_window": "No window data",
-    "summary_loaded": "Data received: {{loaded}} of {{total}}"
+    "summary_loaded": "Data received: {{loaded}} of {{total}}",
+    "passive_note": "from proxy traffic · {{age}}",
+    "passive_stale": "stale · from proxy traffic {{age}}",
+    "passive_hint": "Limits taken from the headers of requests relayed by the proxy. Refresh quota for the full picture: model windows, plan, manual resets."
   },
   "plugin_management": {
     "title": "Plugin Management",

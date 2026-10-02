@@ -55,6 +55,11 @@ import { QuotaList, QuotaListSkeleton } from './list/QuotaList';
 import { QuotaSummary } from './list/QuotaSummary';
 import { QuotaEmailToggle, QuotaViewToggle } from './list/QuotaViewControls';
 import { credentialDisplayName, laneNameFormatter } from './list/privacy';
+import {
+  createPassiveQuotaResolver,
+  latestPassedInstant,
+  passiveResetInstants,
+} from './list/passiveQuota';
 import { readQuotaViewState, writeQuotaViewState, type QuotaViewMode } from './list/viewState';
 import styles from './QuotaPage.module.scss';
 
@@ -165,6 +170,18 @@ export function QuotaPage() {
   const sortNow = sortMode === 'default' ? 0 : tick;
 
   const entries = useMemo(() => classifyQuotaFiles(files), [files]);
+
+  // List, summary, timeline, sort and the header count fall back to the quota
+  // seen in the proxy's own traffic until a credential is fetched; cards stay
+  // fetch-only. The resolver is rebuilt only when a snapshot window's reset
+  // passes, not on every minute tick.
+  const passiveResets = useMemo(() => passiveResetInstants(entries), [entries]);
+  const passiveTick = useNow(passiveResets.length > 0);
+  const passiveRolledAt = latestPassedInstant(passiveResets, passiveTick);
+  const listQuota = useMemo(
+    () => createPassiveQuotaResolver(getQuota, passiveRolledAt),
+    [getQuota, passiveRolledAt]
+  );
   const tabCounts = useMemo(() => buildTabCounts(entries), [entries]);
   const filteredEntries = useMemo(
     () => filterEntriesBySearch(filterEntriesByTab(entries, tab), search),
@@ -176,8 +193,8 @@ export function QuotaPage() {
   }, []);
 
   const resolveNextRecovery = useCallback(
-    (entry: QuotaFileEntry) => nextRecoveryMs(entry.type, getQuota(entry), sortNow),
-    [getQuota, sortNow]
+    (entry: QuotaFileEntry) => nextRecoveryMs(entry.type, listQuota(entry), sortNow),
+    [listQuota, sortNow]
   );
   // 排序在分页之前：否则「最快恢复」只在当前页内成立。
   const sortedEntries = useMemo(
@@ -225,12 +242,12 @@ export function QuotaPage() {
     let loaded = 0;
     let attention = 0;
     entries.forEach((entry) => {
-      const status = quotaByType[entry.type][getQuotaCacheKey(entry.file)]?.status;
+      const status = listQuota(entry)?.status;
       if (status === 'success') loaded += 1;
       else if (status === 'error') attention += 1;
     });
     return { loadedCount: loaded, attentionCount: attention };
-  }, [entries, quotaByType]);
+  }, [entries, listQuota]);
 
   // 剪枝：文件列表落定后，各 provider 缓存只保留仍存在的凭证
   useEffect(() => {
@@ -400,7 +417,7 @@ export function QuotaPage() {
         {!loading && !isEmpty && (
           <QuotaSummary
             entries={filteredEntries}
-            getQuota={getQuota}
+            getQuota={listQuota}
             resolvedTheme={resolvedTheme}
           />
         )}
@@ -445,7 +462,7 @@ export function QuotaPage() {
           <QuotaList
             entries={pageItems}
             counts={tabCounts}
-            getQuota={getQuota}
+            getQuota={listQuota}
             resolvedTheme={resolvedTheme}
             showEmail={showEmail}
             canUseActions={canUseActions}
@@ -503,7 +520,7 @@ export function QuotaPage() {
         {/* 时间线只比较当前页凭证，避免大量凭证一次性生成无界泳道。 */}
         <QuotaTimeline
           entries={pageItems}
-          quotaFor={getQuota}
+          quotaFor={listQuota}
           displayNameFor={displayNameFor}
           resolvedTheme={resolvedTheme}
         />

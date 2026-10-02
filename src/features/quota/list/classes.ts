@@ -19,6 +19,8 @@ export const QUOTA_LIST_CLASS_KEYS = [
   'message',
   'subtitle',
   'plan',
+  'passiveNote',
+  'passiveNoteStale',
 ] as const;
 
 export type QuotaListClassMap = Record<(typeof QUOTA_LIST_CLASS_KEYS)[number], string>;

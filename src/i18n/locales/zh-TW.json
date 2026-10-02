@@ -1628,7 +1628,10 @@
     "summary_accounts": "{{count}} 個帳號",
     "summary_of": "共 {{total}}%",
     "summary_no_window": "暫無視窗資料",
-    "summary_loaded": "已取得資料：{{loaded}} / {{total}}"
+    "summary_loaded": "已取得資料：{{loaded}} / {{total}}",
+    "passive_note": "來自代理請求 · {{age}}",
+    "passive_stale": "已過時 · 來自代理請求 {{age}}",
+    "passive_hint": "限額取自代理轉發請求的回應標頭。重新整理額度可取得完整資訊：模型視窗、方案、手動重置。"
   },
   "plugin_management": {
     "title": "插件管理",
