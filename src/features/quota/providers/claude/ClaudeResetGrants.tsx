@@ -111,6 +111,7 @@ export function useClaudeResetGrants(
     });
   };
   return {
+    status,
     count: status?.grants.reduce((sum, grant) => sum + grant.resetsLeft, 0) ?? null,
     busy,
     blocked,

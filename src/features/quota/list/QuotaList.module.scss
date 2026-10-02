@@ -1,0 +1,419 @@
+@use '../../../styles/mixins' as *;
+
+/* ============================================================
+ * Quota list view: provider groups of hairline-separated rows.
+ * Row = identity | window columns | actions. Every row's column
+ * area is the same width, so auto-fill gives each row the same
+ * tracks and a window lines up from one row to the next.
+ * Telemetry figures are mono + tabular-nums, as on the cards.
+ * ============================================================ */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  min-width: 0;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.groupTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.groupCount {
+  font-family: $font-mono;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li + li {
+    border-top: 1px solid var(--border-color);
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(200px, 300px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px 28px;
+  /* Bleeds 12px past the hairlines so the hover wash has room around the text. */
+  margin: 0 -12px;
+  padding: 18px 12px;
+  min-width: 0;
+  border-radius: 10px;
+  transition: background-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out);
+}
+
+/* ---------- identity ---------- */
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.name {
+  font-family: $font-mono;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-primary);
+  @include text-ellipsis;
+}
+
+.subtitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text-tertiary);
+
+  > * + *::before {
+    content: '·';
+    margin: 0 6px;
+    color: var(--text-quaternary);
+  }
+}
+
+.plan {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ---------- window columns ---------- */
+
+.body {
+  min-width: 0;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px 28px;
+  min-width: 0;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.columnHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.columnLabel {
+  min-width: 0;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--text-secondary);
+  @include text-ellipsis;
+}
+
+.columnPercent {
+  flex-shrink: 0;
+  font-family: $font-mono;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.resetLine {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  > * + *::before {
+    content: '·';
+    margin: 0 5px;
+    color: var(--text-quaternary);
+  }
+}
+
+.resetLead {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.resetMuted {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}
+
+.resetsValue {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+
+.resetsCount {
+  font-family: $font-mono;
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.columnError {
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--viz-failure);
+  overflow-wrap: anywhere;
+}
+
+.message {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+
+.bodyFallback {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 560px;
+}
+
+.error {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--viz-failure);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- idle / loading ---------- */
+
+.idleButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 9px 14px;
+  cursor: pointer;
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  background: none;
+  font-family: $font-mono;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-tertiary);
+  text-align: left;
+  transition:
+    border-color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out),
+    color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out),
+    transform var(--dur-press, 160ms) var(--ease-out-strong, ease-out);
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+.skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px 28px;
+}
+
+.skeletonCell {
+  display: block;
+  height: 44px;
+  border-radius: 8px;
+  background-color: color-mix(in srgb, var(--text-primary) 6%, transparent);
+  background-image: linear-gradient(
+    90deg,
+    transparent 20%,
+    color-mix(in srgb, var(--text-primary) 6%, transparent) 50%,
+    transparent 80%
+  );
+  background-repeat: no-repeat;
+  background-size: 220% 100%;
+  animation: quota-list-sweep 1.2s linear infinite;
+}
+
+@keyframes quota-list-sweep {
+  from {
+    background-position: 120% 0;
+  }
+
+  to {
+    background-position: -120% 0;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- actions ---------- */
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  transition:
+    color var(--dur-hover, 200ms) var(--ease-out-strong, ease-out),
+    transform var(--dur-press, 160ms) var(--ease-out-strong, ease-out);
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+.spinning {
+  animation: quota-list-spin 0.8s linear infinite;
+}
+
+@keyframes quota-list-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .row:hover {
+    background: color-mix(in srgb, var(--bg-tertiary) 45%, transparent);
+  }
+
+  .action:hover:not(:disabled) {
+    color: var(--text-primary);
+  }
+
+  .idleButton:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--primary-color) 35%, var(--border-color));
+    border-style: solid;
+    color: var(--text-secondary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .action,
+  .idleButton {
+    transition: none;
+  }
+
+  .action:active:not(:disabled),
+  .idleButton:active:not(:disabled) {
+    transform: none;
+  }
+
+  .skeletonCell,
+  .spinning {
+    animation: none;
+  }
+}
+
+/* Mid widths: stacked actions leave the columns room for a fourth window. */
+@media (max-width: 1680px) {
+  .actions {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+/* Narrow screens: identity, columns and actions stack. */
+@media (max-width: #{$breakpoint-tablet}) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .actions {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+
+@include mobile {
+  .columns,
+  .skeleton {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+    gap: 12px 20px;
+  }
+}
