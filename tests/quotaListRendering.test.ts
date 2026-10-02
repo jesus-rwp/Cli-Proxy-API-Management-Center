@@ -71,6 +71,7 @@ describe('QuotaListColumns', () => {
       })
     );
     expect(markup.match(/class="column"/g)).toHaveLength(3);
+    expect(markup).not.toContain('columnResets');
     expect(markup).toContain('<span class="columnLabel" title="5-hour limit">5-hour limit</span>');
     expect(markup).toContain('<span class="columnPercent">100%</span>');
     expect(markup).toContain('<span class="resetMuted">No reset pending</span>');
@@ -89,6 +90,7 @@ describe('QuotaListColumns', () => {
         meterClasses,
       })
     );
+    expect(markup).toContain('<div class="column columnResets">');
     expect(markup).toContain('Manual resets');
     expect(markup).toContain('<span class="resetsCount">2</span><span>available</span>');
     expect(markup).toMatch(/<span>Reset 1<\/span><span class="resetLead">in 22 days<\/span>/);
@@ -129,7 +131,7 @@ describe('QuotaListSubtitle', () => {
     if (!plan) throw new Error('expected a plan subtitle');
     const markup = renderToStaticMarkup(createElement(QuotaListSubtitle, { plan, classes }));
     expect(markup).toMatch(
-      /^<div class="subtitle"><span class="plan">Pro 20x<\/span><span>renews [^<]+<\/span><span>in 21 days<\/span><\/div>$/
+      /^<div class="subtitle" title="Pro 20x · renews [^"]+ · in 21 days"><span class="plan">Pro 20x<\/span><span>renews [^<]+<\/span><span>in 21 days<\/span><\/div>$/
     );
   });
 
@@ -137,7 +139,7 @@ describe('QuotaListSubtitle', () => {
     const plan = buildPlanSubtitle('claude', claude);
     if (!plan) throw new Error('expected a plan subtitle');
     expect(renderToStaticMarkup(createElement(QuotaListSubtitle, { plan, classes }))).toBe(
-      '<div class="subtitle"><span class="plan">Max</span></div>'
+      '<div class="subtitle" title="Max"><span class="plan">Max</span></div>'
     );
   });
 });

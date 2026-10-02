@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { IconRefreshCw } from '@/components/ui/icons';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { resolveQuotaErrorMessage } from '@/utils/quota';
+import type { ResolvedTheme } from '@/types';
 import { getQuotaCacheKey } from '@/utils/quota/identity';
 import { getTypeLabel } from '@/features/authFiles/constants';
 import { bindQuotaClasses } from '../types';
@@ -22,6 +23,7 @@ import { useClaudeResetGrants } from '../providers/claude/ClaudeResetGrants';
 import bodyStyles from '../components/QuotaBody.module.scss';
 import { bindQuotaListClasses } from './classes';
 import { groupByProvider } from './grouping';
+import { ProviderLogo } from './ProviderLogo';
 import { QuotaListColumns, QuotaListSubtitle } from './QuotaListColumns';
 import { credentialDisplayName } from './privacy';
 import {
@@ -186,6 +188,7 @@ export type QuotaListProps = {
   /** Credentials per provider across all pages, for the group headings. */
   counts: Record<string, number>;
   getQuota: (entry: QuotaFileEntry) => QuotaCardState | undefined;
+  resolvedTheme: ResolvedTheme;
   showEmail: boolean;
   canUseActions: boolean;
   resettingQuotaName: string | null;
@@ -194,7 +197,7 @@ export type QuotaListProps = {
 };
 
 export function QuotaList(props: QuotaListProps) {
-  const { entries, counts, getQuota, showEmail, canUseActions } = props;
+  const { entries, counts, getQuota, resolvedTheme, showEmail, canUseActions } = props;
   const { resettingQuotaName, onRefresh, onReset } = props;
   const { t } = useTranslation();
 
@@ -226,6 +229,7 @@ export function QuotaList(props: QuotaListProps) {
       {[...groups].map(([type, rows]) => (
         <section key={type} className={styles.group}>
           <h2 className={styles.groupTitle}>
+            <ProviderLogo type={type} resolvedTheme={resolvedTheme} />
             {getTypeLabel(t, type)}
             <span className={styles.groupCount}>{counts[type] ?? rows.length}</span>
           </h2>

@@ -77,16 +77,17 @@ export function QuotaListSubtitle({
   const display = renewal
     ? buildResetDisplay(renewal.label, renewal.atMs, now, i18n.resolvedLanguage)
     : null;
+  const parts = [
+    plan.label ? resolveListText(t, plan.label) : null,
+    renewal && display ? t(`quota_list.${renewal.kind}`, { date: display.absolute }) : null,
+    display?.relative ?? null,
+  ];
 
   return (
-    <div className={classes.subtitle}>
-      {plan.label && <span className={classes.plan}>{resolveListText(t, plan.label)}</span>}
-      {renewal && display && (
-        <>
-          <span>{t(`quota_list.${renewal.kind}`, { date: display.absolute })}</span>
-          {display.relative && <span>{display.relative}</span>}
-        </>
-      )}
+    <div className={classes.subtitle} title={parts.filter(Boolean).join(' · ')}>
+      {parts[0] && <span className={classes.plan}>{parts[0]}</span>}
+      {parts[1] && <span>{parts[1]}</span>}
+      {parts[1] && parts[2] && <span>{parts[2]}</span>}
     </div>
   );
 }
@@ -141,7 +142,7 @@ export function QuotaListColumns({
         );
       })}
       {resets && (
-        <div className={classes.column}>
+        <div className={`${classes.column} ${classes.columnResets}`}>
           <div className={classes.columnHead}>
             <span className={classes.columnLabel}>{t('quota_list.manual_resets')}</span>
           </div>
